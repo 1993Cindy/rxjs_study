@@ -1,0 +1,18 @@
+{
+  "name": "rxjs_demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "fuyu",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^10.12.17",
+    "rxjs": "^6.3.3"
+  },
+  "devDependencies": {
+    "@types/es6-promise": "^3.3.0"
+  }
+}
