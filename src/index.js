@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
-var operators_1 = require("rxjs/internal/operators");
 /**
  * Observable (可观察对象): 表示一个概念，这个概念是一个可调用的未来值或事件的集合。(核心类型)
  Observer (观察者): 一个回调函数的集合，它知道如何去监听由 Observable 提供的值。
@@ -9,8 +8,8 @@ var operators_1 = require("rxjs/internal/operators");
  Operators (操作符): 采用函数式编程风格的纯函数 (pure function)，使用像 map、filter、concat、flatMap
  等这样的操作符来处理集合。
  Subject (主题): 相当于 EventEmitter，并且是将值或事件多路推送给多个 Observer 的唯一方式。
- Schedulers (调度器): 用来控制并发并且是中央集权的调度员，允许我们在发生计算时进行协调，例如 setTimeout 或
- requestAnimationFrame 或其他
+ Schedulers (调度器): 用来控制并发并且是中央集权的调度员，允许我们在发生计算时进行协调，
+ 用来控制事件发出的顺序和速度的(发送给观察者的)。它还可以控制订阅 ( Subscriptions ) 的顺序
  *
  */
 /**
@@ -26,18 +25,18 @@ var operators_1 = require("rxjs/internal/operators");
  * 特点：不订阅不会去加工报纸（只有订阅了才会开始处理）
  */
 // 创建可观察对象（一般会用一些操作符去创建，不自己写，如of、interval、from等）
-var ob = rxjs_1.Observable.create(function subscribe(observer) {
+var ob = rxjs_1.Observable.create(function (observer) {
     var n = 1;
     // 每隔一秒送你一份纸
     var _id = setInterval(function () {
         observer.next("\u7EB8" + n);
         n++;
     }, 1000);
-    // 5秒后送完了，通知你
+    // 4.5秒后送完了，通知你
     setTimeout(function () {
         clearInterval(_id);
         observer.complete();
-    }, 5001);
+    }, 4500);
     return {
         // 给你提供取消订阅的方法
         unsubscribe: function () {
@@ -46,32 +45,36 @@ var ob = rxjs_1.Observable.create(function subscribe(observer) {
     };
 });
 ob.subscribe({
-    next: function () {
+    next: function (v) {
+        console.log(v);
+    },
+    complete: function () {
+        console.log('complete!');
     }
 });
 // 创建观察者
-var observer = {
-    next: function (val) {
-        // 收到一份报纸
-        console.log("\u6536\u5230\u4E00\u4EFD\u62A5\u7EB8: " + val);
-    },
-    error: function (err) {
-        // 送报纸中出问题了（以后也不会送了）
-        console.log('送报纸中出问题了！');
-    },
-    complete: function () {
-        console.log("\u9001\u5B8C\u4E86\uFF0C\u4EE5\u540E\u4E5F\u4E0D\u4F1A\u9001\u4E86");
-    }
-};
-// 加工成报纸
-var ob2 = ob.pipe(operators_1.map(function (val) {
-    console.log(val + "\u52A0\u5DE5\u6210\u62A5\u7EB8");
-    return "\u62A5" + val;
-}));
-// 订阅
-var subscription1 = ob2.subscribe(observer);
-// 两个是相互独立的，不共享（subject是多播的）
-// const subscription2 = ob2.subscribe(observer);
+// const observer = {
+//     next(val) {
+//         // 收到一份报纸
+//         console.log(`收到一份报纸: ${val}`);
+//     },
+//     error(err) {
+//         // 送报纸中出问题了（以后也不会送了）
+//         console.log('送报纸中出问题了！')
+//     },
+//     complete() {
+//         console.log(`送完了，以后也不会送了`)
+//     }
+// }
+//
+// // 加工成报纸
+// const ob2 = ob.pipe(map(val => {
+//     console.log(`${val}加工成报纸`);
+//     return `报${val}`;
+// }));
+//
+// // 订阅
+// const subscription1 = ob2.subscribe(observer);
 // 4.5s后取消订阅，不要报纸了
 // setTimeout(() => {
 //     console.log('我自己不要报纸了.')

@@ -10,8 +10,8 @@ import {map} from "rxjs/internal/operators";
  Operators (操作符): 采用函数式编程风格的纯函数 (pure function)，使用像 map、filter、concat、flatMap
  等这样的操作符来处理集合。
  Subject (主题): 相当于 EventEmitter，并且是将值或事件多路推送给多个 Observer 的唯一方式。
- Schedulers (调度器): 用来控制并发并且是中央集权的调度员，允许我们在发生计算时进行协调，例如 setTimeout 或
- requestAnimationFrame 或其他
+ Schedulers (调度器): 用来控制并发并且是中央集权的调度员，允许我们在发生计算时进行协调，
+ 用来控制事件发出的顺序和速度的(发送给观察者的)。它还可以控制订阅 ( Subscriptions ) 的顺序
  *
  */
 
@@ -30,18 +30,18 @@ import {map} from "rxjs/internal/operators";
  */
 
 // 创建可观察对象（一般会用一些操作符去创建，不自己写，如of、interval、from等）
-const ob = Observable.create(function subscribe(observer) {
+const ob = Observable.create((observer) => {
     let n = 1;
     // 每隔一秒送你一份纸
     let _id = setInterval(() => {
         observer.next(`纸${n}`);
         n++;
     }, 1000);
-    // 5秒后送完了，通知你
+    // 4.5秒后送完了，通知你
     setTimeout(() => {
         clearInterval(_id);
         observer.complete();
-    }, 5001);
+    }, 4500);
     return {
         // 给你提供取消订阅的方法
         unsubscribe() {
@@ -51,8 +51,11 @@ const ob = Observable.create(function subscribe(observer) {
 
 });
 ob.subscribe({
-    next() {
-
+    next(v) {
+        console.log(v);
+    },
+    complete() {
+        console.log('complete!');
     }
 })
 
@@ -60,31 +63,28 @@ ob.subscribe({
 
 
 // 创建观察者
-const observer = {
-    next(val) {
-        // 收到一份报纸
-        console.log(`收到一份报纸: ${val}`);
-    },
-    error(err) {
-        // 送报纸中出问题了（以后也不会送了）
-        console.log('送报纸中出问题了！')
-    },
-    complete() {
-        console.log(`送完了，以后也不会送了`)
-    }
-}
-
-// 加工成报纸
-const ob2 = ob.pipe(map(val => {
-    console.log(`${val}加工成报纸`);
-    return `报${val}`;
-}));
-
-// 订阅
-const subscription1 = ob2.subscribe(observer);
-
-// 两个是相互独立的，不共享（subject是多播的）
-// const subscription2 = ob2.subscribe(observer);
+// const observer = {
+//     next(val) {
+//         // 收到一份报纸
+//         console.log(`收到一份报纸: ${val}`);
+//     },
+//     error(err) {
+//         // 送报纸中出问题了（以后也不会送了）
+//         console.log('送报纸中出问题了！')
+//     },
+//     complete() {
+//         console.log(`送完了，以后也不会送了`)
+//     }
+// }
+//
+// // 加工成报纸
+// const ob2 = ob.pipe(map(val => {
+//     console.log(`${val}加工成报纸`);
+//     return `报${val}`;
+// }));
+//
+// // 订阅
+// const subscription1 = ob2.subscribe(observer);
 
 // 4.5s后取消订阅，不要报纸了
 // setTimeout(() => {

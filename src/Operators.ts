@@ -27,7 +27,7 @@ import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, take} from "
 
 
 /**
- * 3、 map  对源 observable 的每个值应用投射函数。filter 过滤
+ * 3、 map  对源 observable 的每个值应用投射函数。filter 过滤      (观察每个发射值被操作的顺序（一个一个进行的）)
  */
 // 发出 (1,2,3,4,5)
 // const ofSource = of(1, 2, 3, 4, 5);
@@ -37,7 +37,7 @@ import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, take} from "
 // example.subscribe(val => console.log(val));
 
 /**
- * catchError 处理 observable 序列中的错误（记住要在 catch 函数中返回一个 observable !）
+ * catchError 处理 observable 序列中的错误（要在 catch 函数中返回一个 observable !）
  */
 // const source = throwError('This is an error!');
 // // 处理错误，并返回带有错误信息的 observable
@@ -47,7 +47,7 @@ import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, take} from "
 
 
 /**
- * 4、merge 将多个 observables 转换成单个 observable 。
+ * 4、merge 将多个 observables 转换成单个 observable 。mapTo  将每个发出值映射成常量
  */
 
 // const example = merge(
@@ -72,7 +72,7 @@ import {catchError, delay, filter, map, mapTo, mergeMap, switchMap, take} from "
 // 4、mergeMap 映射成 observable 并发出值
 // 5、switchMap 映射成 observable，在每次发出时，会取消前一个内部 observable (你所提供函数的结果) 的订阅，
 // 然后订阅一个新的 observable
-// 6、mapTo  将每个发出值映射成常量
+//
 
 
 // 5秒后发出0，mergeMap把它映射成Observable（也就是第一个去发请求的那个observable），

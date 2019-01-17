@@ -19,14 +19,14 @@ import {AsyncSubject, BehaviorSubject, from, ReplaySubject, Subject} from "rxjs/
 
 
 // const subject = new Subject<number>();
-//
+// // 这里作为可观察对象
 // subject.subscribe({
 //     next: (v) => console.log(`observerA: ${v}`)
 // });
 // subject.subscribe({
 //     next: (v) => console.log(`observerB: ${v}`)
 // });
-//
+// // 这里subject作为观察者
 // subject.next(1);
 // subject.next(2);
 
@@ -48,8 +48,12 @@ import {AsyncSubject, BehaviorSubject, from, ReplaySubject, Subject} from "rxjs/
 // });
 //
 // const observable = from([1, 2, 3]);
-//
-// observable.subscribe(subject); // You can subscribe providing a Subject
+// const observer = (val) => {
+//     console.log('单播：', val);
+// };
+// observable.subscribe(observer);
+// observable.subscribe(observer);
+// observable.subscribe(subject); // 这里subject作为Observable的观察者，调用了next方法，（但同时作为可观察对象，发出了值,使订阅它的观察者同时获取到了值）
 
 // Logs:
 // observerA: 1
